@@ -1,0 +1,36 @@
+#docker-compose.yml
+
+services:
+  php:
+    image: php:8.3.4-fpm
+    build: ./docker/php
+    volumes:
+      - ./app:/var/www/symfony
+    networks:
+      - symfony
+
+  nginx:
+    image: nginx:latest
+    build: ./docker/nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/symfony
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - symfony
+
+  db:
+    image: mysql:8.0.33
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: symfony
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: secret
+    ports:
+      - "23306:3306"
+    networks:
+      - symfony
+
+networks:
+  symfony:
